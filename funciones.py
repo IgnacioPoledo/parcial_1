@@ -394,7 +394,10 @@ def generar_reporte_por_presupuesto():
 def generar_reporte_por_nombre():
     global numero_reporte
     nombre = input("Ingrese el nombre del proyecto a buscar: ")
-    proyectos_con_nombre = [p for p in proyectos if p['Nombre del Proyecto'] == nombre]
+    proyectos_con_nombre = []
+    for p in proyectos:
+        if p['Nombre del Proyecto'] == nombre:
+            proyectos_con_nombre.append(p)
 
     if not proyectos_con_nombre:
         print("No hay proyectos con ese nombre.")
