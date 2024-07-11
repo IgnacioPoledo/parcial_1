@@ -330,4 +330,90 @@ def guardar_proyectos_finalizados_json(proyectos):
     with open('ProyectosFinalizados.json', 'w') as file:
         json.dump(proyectos_finalizados, file, indent=4)
 
+def mostrar_proyectos_finalizados_dos_anios():
+    proyectos_finalizados_dos_anios = []
+    for proyecto in proyectos:
+        if proyecto['Estado'] == 'Finalizado':
+            fecha_inicio = datetime.strptime(proyecto['Fecha de inicio'], "%d-%m-%Y")
+            fecha_fin = datetime.strptime(proyecto['Fecha de Fin'], "%d-%m-%Y")
+            duracion = (fecha_fin - fecha_inicio).days / 365.25  # Convertir días a años
+            if duracion > 2:
+                proyectos_finalizados_dos_anios.append(proyecto)
+    
+    if not proyectos_finalizados_dos_anios:
+        print("No hay proyectos finalizados que hayan durado más de 2 años.")
+        return
+    
+    print(f"| {'id':<2} | {'Nombre del Proyecto':<30} | {'Descripción':<50} | {'Fecha de inicio':<12} | {'Fecha de Fin':<12} | {'Presupuesto':<10} | {'Estado':<10} |")
+    for proyecto in proyectos_finalizados_dos_anios:
+        print(f"| {proyecto['id']:<2} | {proyecto['Nombre del Proyecto']:<30} | {proyecto['Descripción']:<50} | {proyecto['Fecha de inicio']:<12} | {proyecto['Fecha de Fin']:<12} |{proyecto['Presupuesto']:<10} | {proyecto['Estado']:<10} |")
+
+def mostrar_proyectos_finalizados_menos_tres_anios():
+    proyectos_finalizados_menos_tres_anios = []
+    for proyecto in proyectos:
+        if proyecto['Estado'] == 'Finalizado':
+            fecha_inicio = datetime.strptime(proyecto['Fecha de inicio'], "%d-%m-%Y")
+            fecha_fin = datetime.strptime(proyecto['Fecha de Fin'], "%d-%m-%Y")
+            duracion = (fecha_fin - fecha_inicio).days / 365.25  # Convertir días a años
+            if duracion < 3:
+                proyectos_finalizados_menos_tres_anios.append(proyecto)
+    
+    if not proyectos_finalizados_menos_tres_anios:
+        print("No hay proyectos finalizados que hayan durado menos de 3 años.")
+        return
+    
+    print(f"| {'id':<2} | {'Nombre del Proyecto':<30} | {'Descripción':<50} | {'Fecha de inicio':<12} | {'Fecha de Fin':<12} | {'Presupuesto':<10} | {'Estado':<10} |")
+    for proyecto in proyectos_finalizados_menos_tres_anios:
+        print(f"| {proyecto['id']:<2} | {proyecto['Nombre del Proyecto']:<30} | {proyecto['Descripción']:<50} | {proyecto['Fecha de inicio']:<12} | {proyecto['Fecha de Fin']:<12} |{proyecto['Presupuesto']:<10} | {proyecto['Estado']:<10} |")
+
+numero_reporte = 1
+
+def generar_reporte_por_presupuesto():
+    global numero_reporte
+    presupuesto = int(input("Ingrese el presupuesto a comparar: "))
+    proyectos_superan_presupuesto = [p for p in proyectos if int(p['Presupuesto']) > presupuesto]
+
+    if not proyectos_superan_presupuesto:
+        print("No hay proyectos que superen ese presupuesto.")
+        return
+
+    fecha_solicitud = datetime.now().strftime("%d-%m-%Y")
+    cantidad_proyectos = len(proyectos_superan_presupuesto)
+    reporte = f"Reporte Número: {numero_reporte}\nFecha de Solicitud: {fecha_solicitud}\nCantidad de Proyectos: {cantidad_proyectos}\n\nListado de Proyectos:\n"
+    reporte += f"| {'id'} | {'Nombre del Proyecto'} | {'Descripción'} | {'Fecha de inicio'} | {'Fecha de Fin'} | {'Presupuesto'} | {'Estado'} |\n"
+    
+    for proyecto in proyectos_superan_presupuesto:
+        reporte += f"| {proyecto['id']} | {proyecto['Nombre del Proyecto']} | {proyecto['Descripción']} | {proyecto['Fecha de inicio']} | {proyecto['Fecha de Fin']} | {proyecto['Presupuesto']} | {proyecto['Estado']} |\n"
+
+    with open(f"reporte_{numero_reporte}.txt", "w", encoding='utf-8') as file:
+        file.write(reporte)
+
+    numero_reporte += 1
+    print(f"Reporte generado exitosamente como 'reporte_{numero_reporte - 1}.txt'.")
+
+def generar_reporte_por_nombre():
+    global numero_reporte
+    nombre = input("Ingrese el nombre del proyecto a buscar: ")
+    proyectos_con_nombre = [p for p in proyectos if p['Nombre del Proyecto'] == nombre]
+
+    if not proyectos_con_nombre:
+        print("No hay proyectos con ese nombre.")
+        return
+
+    fecha_solicitud = datetime.now().strftime("%d-%m-%Y")
+    cantidad_proyectos = len(proyectos_con_nombre)
+    reporte = f"Reporte Número: {numero_reporte}\nFecha de Solicitud: {fecha_solicitud}\nCantidad de Proyectos: {cantidad_proyectos}\n\nListado de Proyectos:\n"
+    reporte += f"| {'id'} | {'Nombre del Proyecto'} | {'Descripción'} | {'Fecha de inicio'} | {'Fecha de Fin'} | {'Presupuesto'} | {'Estado'} |\n"
+    
+    for proyecto in proyectos_con_nombre:
+        reporte += f"| {proyecto['id']} | {proyecto['Nombre del Proyecto']} | {proyecto['Descripción']} | {proyecto['Fecha de inicio']} | {proyecto['Fecha de Fin']} | {proyecto['Presupuesto']} | {proyecto['Estado']} |\n"
+
+    with open(f"reporte_nombre_{numero_reporte}.txt", "w", encoding='utf-8') as file:
+        file.write(reporte)
+
+    numero_reporte += 1
+    print(f"Reporte generado exitosamente como 'reporte_nombre_{numero_reporte - 1}.txt'.")
+
+
+
 proyectos = cargar_proyectos_desde_csv('proyecto_1/Proyectos.csv')    
